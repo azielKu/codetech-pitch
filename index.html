@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Style Frame — Board Briefing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0B0F14;
+    --surface: #141A22;
+    --surface-2: #1B232E;
+    --hairline: rgba(255, 255, 255, 0.08);
+    --hairline-strong: rgba(255, 255, 255, 0.14);
+    --text: #F4F7FA;
+    --text-dim: #94A1B2;
+    --emerald: #13B981;
+    --emerald-soft: rgba(19, 185, 129, 0.12);
+    --gold: #E5B567;
+    --gold-soft: rgba(229, 181, 103, 0.14);
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --line-soft: rgba(255, 255, 255, 0.06);
+    --line-dim: var(--line-dim);
+    --line-strong: rgba(255, 255, 255, 0.28);
+    --device-bg: #0d1117;
+    --device-edge: #2a323d;
+    --card-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+    --win-shadow: 0 36px 70px -30px rgba(0, 0, 0, 0.7);
+    --red: #E5564B;
+    --accent: var(--emerald);
+    --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+  body.light {
+    --ink: #FBFCFD;
+    --surface: #FFFFFF;
+    --surface-2: #EFF3F7;
+    --hairline: rgba(15, 23, 32, 0.10);
+    --hairline-strong: rgba(15, 23, 32, 0.18);
+    --text: #16202E;
+    --text-dim: #45525F;
+    --emerald: #0A7A50;
+    --emerald-soft: rgba(10, 122, 80, 0.12);
+    --gold: #B7791F;
+    --gold-soft: rgba(183, 121, 31, 0.14);
+    --line-soft: rgba(15, 23, 32, 0.07);
+    --line-dim: rgba(15, 23, 32, 0.16);
+    --line-strong: rgba(15, 23, 32, 0.32);
+    --device-bg: #EDF1F5;
+    --device-edge: #CFD6DE;
+    --card-shadow: 0 18px 40px -24px rgba(15, 23, 32, 0.22);
+    --win-shadow: 0 22px 46px -26px rgba(15, 23, 32, 0.26);
+    --red: #D64A3F;
+  }
+  body { transition: background 0.4s ease, color 0.4s ease; }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- horizontal deck ---------- */
+  .deck { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+  .track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+    will-change: transform;
+  }
+  section.panel {
+    min-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: clamp(28px, 6vw, 92px);
+  }
+
+  /* ---------- fixed chrome ---------- */
+  .wordmark {
+    position: fixed;
+    top: clamp(20px, 3vw, 36px);
+    left: clamp(20px, 3vw, 44px);
+    z-index: 20;
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .wordmark .mark {
+    width: 11px; height: 11px; transform: rotate(45deg);
+    background: linear-gradient(135deg, var(--accent), var(--gold));
+    border-radius: 2px;
+  }
+  .counter {
+    position: fixed; top: clamp(20px, 3vw, 36px); right: clamp(20px, 3vw, 44px);
+    z-index: 20; font-family: var(--font-mono);
+    font-size: 0.72rem; letter-spacing: 0.18em; color: var(--text-dim);
+    right: clamp(58px, 8vw, 92px);
+  }
+  .theme-toggle {
+    position: fixed; top: clamp(16px, 3vw, 32px); right: clamp(20px, 3vw, 44px); z-index: 21;
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+    border: 1px solid var(--hairline-strong); background: var(--surface); color: var(--text);
+    font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+  .dots {
+    position: fixed; left: 50%; bottom: clamp(20px, 3vw, 34px);
+    transform: translateX(-50%); z-index: 20;
+    display: flex; flex-direction: row; gap: 16px;
+  }
+  .dots button {
+    all: unset; cursor: pointer; width: 9px; height: 9px; border-radius: 50%;
+    background: var(--hairline-strong);
+    transition: background 0.35s ease, transform 0.35s ease;
+  }
+  .dots button.active {
+    background: var(--accent); transform: scale(1.35);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+
+  /* ---------- reveal motion ---------- */
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .reveal.in { opacity: 1; transform: none; }
+  .d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.18s; }
+  .d3 { transition-delay: 0.30s; } .d4 { transition-delay: 0.42s; } .d5 { transition-delay: 0.54s; }
+
+  /* ---------- shared layout ---------- */
+  .grid {
+    display: grid; grid-template-columns: 1.05fr 0.95fr;
+    gap: clamp(36px, 5vw, 68px); max-width: 1160px; width: 100%; align-items: center;
+  }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 22px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .eyebrow.em { color: var(--accent); }
+  h2 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.04;
+    letter-spacing: -0.02em; margin: 0 0 24px;
+  }
+  .p-body p { font-size: 1.05rem; line-height: 1.62; color: var(--text-dim); margin: 0 0 16px; max-width: 48ch; }
+  .p-body p strong { color: var(--text); font-weight: 500; }
+  .draft-pill {
+    font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.18em;
+    color: var(--text-dim); border: 1px solid var(--hairline-strong);
+    padding: 3px 8px; border-radius: 100px;
+  }
+  .badge {
+    font-size: 0.62rem; letter-spacing: 0.18em; color: var(--gold);
+    border: 1px solid var(--gold-soft); background: var(--gold-soft);
+    padding: 4px 9px; border-radius: 100px;
+  }
+  .illus { font-size: 0.66rem; color: var(--text-dim); opacity: 0.75; margin-top: 10px; }
+
+  .viz {
+    background: linear-gradient(160deg, var(--surface-2), var(--surface));
+    border: 1px solid var(--hairline); border-radius: 22px;
+    padding: clamp(22px, 2.6vw, 34px);
+    box-shadow: var(--card-shadow);
+  }
+
+  /* ---------- hero ---------- */
+  #hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(58% 50% at 28% 32%, rgba(19, 185, 129, 0.16), transparent 70%),
+      radial-gradient(52% 46% at 76% 70%, rgba(229, 181, 103, 0.13), transparent 72%);
+    animation: drift 18s ease-in-out infinite alternate; pointer-events: none;
+  }
+  @keyframes drift { to { transform: translate3d(0, -3%, 0) scale(1.06); } }
+  .hero-inner { max-width: 1000px; text-align: center; position: relative; z-index: 1; }
+  .hero-inner .eyebrow { justify-content: center; }
+  .hero-inner h1 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(2.9rem, 8.2vw, 6.4rem); line-height: 0.98;
+    letter-spacing: -0.035em; margin: 0 0 26px;
+  }
+  .hero-inner h1 .accent {
+    background: linear-gradient(120deg, var(--accent), var(--gold));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sub { font-size: clamp(1.02rem, 2.1vw, 1.32rem); line-height: 1.55; color: var(--text-dim); max-width: 62ch; margin: 0 auto 38px; }
+  .ticker {
+    font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text-dim);
+    border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline);
+    padding: 14px 0; display: inline-block;
+  }
+  .ticker b { color: var(--text); font-weight: 500; }
+  .scroll-hint {
+    position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-dim);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .scroll-hint .arrow { animation: nudge 1.7s ease-in-out infinite; }
+  @keyframes nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+
+  /* ---------- cost panel ---------- */
+  .wins { list-style: none; padding: 0; margin: 22px 0 0; display: flex; flex-direction: column; gap: 10px; }
+  .wins li { position: relative; padding-left: 26px; color: var(--text); font-size: 0.95rem; }
+  .wins li::before { content: '✓'; position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+
+  .bigchange { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .bc-from { font-family: var(--font-display); font-size: 1.5rem; color: var(--text-dim); text-decoration: line-through; text-decoration-color: rgba(148, 161, 178, 0.5); }
+  .bc-arrow { color: var(--text-dim); }
+  .bc-to { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.4rem, 4.6vw, 3.3rem); color: var(--gold); letter-spacing: -0.02em; }
+  .bc-unit { color: var(--text-dim); font-size: 0.88rem; }
+  .bc-pct { margin-left: auto; font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); border: 1px solid var(--accent-soft); background: var(--accent-soft); padding: 4px 10px; border-radius: 100px; }
+
+  .save { margin-bottom: 24px; }
+  .save .num { font-family: var(--font-display); font-weight: 600; font-size: 1.7rem; color: var(--gold); }
+  .save .save-l { color: var(--text-dim); font-size: 0.9rem; margin-left: 8px; }
+
+  .cat-title { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 14px; }
+  .cat { margin-bottom: 13px; }
+  .cat-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .cn { font-size: 0.85rem; color: var(--text); }
+  .cat-note { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-dim); }
+  .cbar { display: flex; align-items: center; gap: 10px; margin: 3px 0; }
+  .cbar .track { flex: 1; height: 8px; background: var(--line-soft); border-radius: 100px; overflow: hidden; }
+  .cbar .fill { height: 100%; width: 0; border-radius: 100px; min-width: 3px; transition: width 1.2s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .cbar .fill.before { background: var(--line-dim); }
+  .cbar .fill.after { background: var(--accent); }
+  .cbar .cv { width: 58px; text-align: right; font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-dim); flex-shrink: 0; }
+  .cbar .cv.gold { color: var(--gold); }
+  .cost-total { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--hairline); font-family: var(--font-mono); font-size: 0.88rem; color: var(--text); display: flex; justify-content: space-between; }
+  .ct-from { color: var(--text-dim); text-decoration: line-through; }
+  .ct-to { color: var(--gold); font-weight: 500; }
+
+  /* ---------- P&L panel ---------- */
+  .pnl { font-family: var(--font-mono); font-size: 0.9rem; }
+  .pnl .row { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--hairline); }
+  .pnl .row .lbl { color: var(--text-dim); }
+  .pnl .row .v { color: var(--text); }
+  .pnl .row.net { border-bottom: none; border-top: 1px solid var(--hairline-strong); margin-top: 6px; }
+  .pnl .row.net .v { color: var(--gold); font-size: 1.15rem; }
+  .pnl .row.old .lbl, .pnl .row.old .v { color: var(--text-dim); }
+
+  /* ---------- cost line chart ---------- */
+  .proofline { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; }
+  .proofline span { border: 1px solid var(--hairline-strong); color: var(--text-dim); padding: 6px 11px; border-radius: 100px; }
+  .proofline span.hl { border-color: var(--accent-soft); background: var(--accent-soft); color: var(--accent); }
+  .linechart { margin-top: 2px; }
+  .lc-wipe { clip-path: inset(0 100% 0 0); transition: clip-path 1.5s cubic-bezier(0.2, 0.7, 0.2, 1); transition-delay: 0.25s; }
+  .viz.in .lc-wipe { clip-path: inset(0 0 0 0); }
+  .linechart svg { width: 100%; height: auto; display: block; }
+  .lc-grid { stroke: rgba(255, 255, 255, 0.06); stroke-width: 1; }
+  .lc-axis { fill: var(--text-dim); font-family: var(--font-mono); font-size: 9px; }
+  .lc-rev { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .lc-cost { fill: none; stroke: #C9D2DD; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .lc-area { fill: rgba(19, 185, 129, 0.14); }
+  .lc-mark { stroke: var(--gold); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
+  .lc-marktext { fill: var(--gold); font-family: var(--font-mono); font-size: 9px; }
+  .lc-dot { fill: var(--gold); stroke: var(--ink); stroke-width: 2; }
+  .legend { display: flex; gap: 16px; margin-top: 12px; font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-dim); }
+  .legend span { display: flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 3px; border-radius: 2px; display: inline-block; }
+  .legend i.rev { background: var(--accent); }
+  .legend i.cost { background: #C9D2DD; }
+  .legend i.profit { width: 11px; height: 11px; border-radius: 3px; background: rgba(19, 185, 129, 0.3); }
+  .cash { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 4px; }
+  .cash .num { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.6rem, 5vw, 3.6rem); color: var(--gold); line-height: 1; letter-spacing: -0.02em; }
+  .cash .cash-l { color: var(--text-dim); font-size: 0.82rem; line-height: 1.4; padding-top: 8px; }
+  .divline { height: 1px; background: var(--hairline); margin: 20px 0; }
+  .qtab { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 0 6px; font-family: var(--font-mono); font-size: 0.82rem; }
+  .qtab .qh { color: var(--text); font-weight: 600; text-align: right; padding: 0 0 7px; border-bottom: 1px solid var(--hairline-strong); }
+  .qtab .qh.l { text-align: left; color: var(--text-dim); font-weight: 400; }
+  .qtab .ql { color: var(--text-dim); text-align: left; padding: 6px 0; }
+  .qtab .qv { color: var(--text); text-align: right; padding: 6px 0; }
+  .qtab .qsep { grid-column: 1 / -1; height: 1px; background: var(--hairline); margin: 4px 0; }
+  .qtab .ql.net, .qtab .qv.net { color: var(--gold); font-weight: 600; border-top: 1px solid var(--hairline-strong); padding-top: 9px; }
+  /* migration chart (theme-aware) */
+  .mc-grid { stroke: var(--line-soft); stroke-width: 1; }
+  .mc-zero { stroke: var(--line-strong); stroke-width: 1; }
+  .mc-axis { fill: var(--text-dim); font-family: var(--font-mono); font-size: 9px; }
+  .mc-axis.s { font-size: 7.5px; }
+  .mc-pos { fill: var(--accent); }
+  .mc-neg { fill: var(--red); }
+  .mc-mark { stroke: var(--gold); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.85; }
+  .mc-marktext { fill: var(--gold); font-family: var(--font-mono); font-size: 8.5px; }
+  .mc-pos-t { fill: var(--accent); font-family: var(--font-mono); font-size: 8.5px; }
+  /* big price / revenue highlight on product slides */
+  .bigprice { margin: 2px 0 18px; }
+  .bigprice .n { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.2rem, 4.6vw, 3.2rem); color: var(--gold); letter-spacing: -0.02em; line-height: 1; }
+  .bigprice .n small { font-size: 0.42em; color: var(--text-dim); font-weight: 500; }
+  .bigprice .s { margin-top: 7px; font-size: 0.85rem; color: var(--text-dim); }
+  .qtab.w7 { grid-template-columns: 1.5fr repeat(6, 1fr); font-size: 0.74rem; gap: 0 4px; }
+  .qtab .ql.qc, .qtab .qv.qc { font-weight: 600; color: var(--text); border-top: 1px solid var(--hairline-strong); padding-top: 8px; }
+
+  /* ---------- product panel ---------- */
+  .market { margin-top: 26px; font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); }
+  .market span { color: var(--accent); }
+  .stat-row { display: flex; gap: 26px; margin-bottom: 28px; }
+  .stat { flex: 1; }
+  .stat .num { font-family: var(--font-display); font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+  .stat.big .num { font-size: clamp(2.4rem, 5vw, 3.4rem); color: var(--gold); }
+  .stat.small .num { font-size: clamp(1.7rem, 3.2vw, 2.2rem); color: var(--text); }
+  .stat .label { margin-top: 8px; font-size: 0.8rem; color: var(--text-dim); line-height: 1.4; }
+  .chart-title { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 14px; }
+  .bar-line { margin-bottom: 14px; }
+  .bar-line .bl-top { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 7px; }
+  .bar-line .bl-top .v { font-family: var(--font-mono); color: var(--text); }
+  .bar-track { height: 10px; background: var(--line-soft); border-radius: 100px; overflow: hidden; }
+  .bar-fill { height: 100%; width: 0; border-radius: 100px; min-width: 3px; transition: width 1.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .bar-fill.manual { background: var(--line-dim); }
+  .bar-fill.ours { background: var(--accent); }
+  .quote { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--hairline); font-size: 0.95rem; line-height: 1.55; color: var(--text); }
+  .quote cite { display: block; margin-top: 12px; font-style: normal; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.06em; color: var(--text-dim); }
+
+  /* ---------- sector divider ---------- */
+  .divider-inner { max-width: 1000px; text-align: center; }
+  .divider-inner .eyebrow { justify-content: center; }
+  .div-title { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.6rem, 7vw, 5rem); line-height: 1; letter-spacing: -0.03em; margin: 0 0 20px; background: linear-gradient(120deg, var(--accent), var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .div-sub { font-size: clamp(1rem, 2vw, 1.25rem); color: var(--text-dim); max-width: 56ch; margin: 0 auto 44px; }
+  .sector-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .sec-card { background: linear-gradient(160deg, var(--surface-2), var(--surface)); border: 1px solid var(--hairline); border-radius: 14px; padding: 22px 18px; text-align: left; transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), border-color 0.3s ease; }
+  .sec-card:hover { transform: translateY(-4px); border-color: var(--accent-soft); }
+  .sec-card .sec-n { display: block; font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; color: var(--text); margin-bottom: 8px; }
+  .sec-card .sec-d { font-size: 0.82rem; color: var(--text-dim); line-height: 1.45; }
+  .sec-card .sec-tag { display: inline-block; margin-top: 12px; font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 100px; border: 1px solid var(--hairline-strong); color: var(--text-dim); }
+  .sec-card .sec-tag.live { color: var(--accent); border-color: var(--accent-soft); background: var(--accent-soft); }
+  .sector-row.three { grid-template-columns: repeat(3, 1fr); }
+  .div-stat { margin-top: 30px; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-dim); }
+  .div-stat b { color: var(--gold); }
+  .div-sub strong { color: var(--text); font-weight: 500; }
+  .sec-card .sec-tag.bundle { color: var(--gold); border-color: var(--gold-soft); background: var(--gold-soft); }
+  @media (max-width: 880px) { .sector-row, .sector-row.three { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- folio signed-doc ---------- */
+  .doc { background: var(--ink); border: 1px solid var(--hairline); border-radius: 12px; padding: 16px 18px 26px; position: relative; margin-bottom: 24px; overflow: hidden; }
+  .doc-bar { font-family: var(--font-mono); font-size: 0.66rem; color: var(--text-dim); margin-bottom: 14px; }
+  .doc-lines { display: flex; flex-direction: column; gap: 8px; }
+  .doc-lines i { height: 7px; background: var(--line-soft); border-radius: 100px; }
+  .doc-lines i:nth-child(1) { width: 92%; }
+  .doc-lines i:nth-child(2) { width: 80%; }
+  .doc-lines i:nth-child(3) { width: 96%; }
+  .doc-lines i:nth-child(4) { width: 58%; }
+  .doc-sign { position: absolute; right: 18px; bottom: 14px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 8px; padding: 6px 12px; transform: rotate(-8deg) scale(0.5); opacity: 0; transition: opacity 0.5s ease 0.6s, transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1.5) 0.6s; }
+  .viz.in .doc-sign { opacity: 1; transform: rotate(-8deg) scale(1); }
+
+  /* ---------- product demo (window + phone) ---------- */
+  .showcase { position: relative; width: 100%; max-width: 520px; }
+  .win { width: 100%; border-radius: 14px; background: var(--surface); border: 1px solid var(--hairline); box-shadow: var(--win-shadow); overflow: hidden; }
+  .win-bar { height: 38px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--hairline); background: var(--surface-2); }
+  .win-dots { display: flex; gap: 6px; }
+  .win-dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .win-title { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.04em; color: var(--text-dim); }
+  .win-tabs { display: flex; gap: 2px; padding: 10px 12px 0; }
+  .win-tab { all: unset; cursor: pointer; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.03em; color: var(--text-dim); padding: 6px 11px; border-radius: 8px 8px 0 0; transition: color 0.25s, background 0.25s; }
+  .win-tab.on { color: var(--accent); background: var(--accent-soft); }
+  .win-body { position: relative; height: 244px; margin: 8px; border-radius: 10px; background: var(--ink); border: 1px solid var(--hairline); overflow: hidden; }
+  .scene { position: absolute; inset: 0; padding: 18px; opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); pointer-events: none; }
+  .scene.active { opacity: 1; transform: none; pointer-events: auto; }
+  .sc-title { font-family: var(--font-display); font-size: 0.95rem; color: var(--text); margin-bottom: 16px; }
+  .mono { font-family: var(--font-mono); }
+  .gold { color: var(--gold); }
+
+  .field { margin-bottom: 12px; }
+  .field .fl { display: block; font-size: 0.66rem; color: var(--text-dim); margin-bottom: 5px; }
+  .field .fv { height: 22px; background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 6px; overflow: hidden; }
+  .field .fillbar { display: block; height: 100%; width: 0; background: var(--accent-soft); border-right: 2px solid var(--accent); transition: width 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .scene.active .field:nth-child(2) .fillbar { width: var(--w); transition-delay: 0.15s; }
+  .scene.active .field:nth-child(3) .fillbar { width: var(--w); transition-delay: 0.35s; }
+  .scene.active .field:nth-child(4) .fillbar { width: var(--w); transition-delay: 0.55s; }
+  .scene.active .field:nth-child(5) .fillbar { width: var(--w); transition-delay: 0.75s; }
+  .sc-btn { display: inline-block; margin-top: 6px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-soft); padding: 8px 14px; border-radius: 8px; opacity: 0; transition: opacity 0.4s ease 0.95s; }
+  .scene.active .sc-btn { opacity: 1; }
+
+  .week { display: flex; gap: 10px; align-items: flex-end; height: 148px; padding: 6px 0; }
+  .day { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; height: 100%; }
+  .day .blk { width: 100%; height: 0; background: var(--accent); border-radius: 6px; transition: height 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .day .blk.gold { background: linear-gradient(180deg, var(--gold), rgba(229, 181, 103, 0.4)); }
+  .day span { font-size: 0.62rem; color: var(--text-dim); font-family: var(--font-mono); }
+  .scene.active .day:nth-child(1) .blk { height: var(--h); transition-delay: 0.05s; }
+  .scene.active .day:nth-child(2) .blk { height: var(--h); transition-delay: 0.15s; }
+  .scene.active .day:nth-child(3) .blk { height: var(--h); transition-delay: 0.25s; }
+  .scene.active .day:nth-child(4) .blk { height: var(--h); transition-delay: 0.35s; }
+  .scene.active .day:nth-child(5) .blk { height: var(--h); transition-delay: 0.45s; }
+  .sc-foot { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-dim); margin-top: 10px; }
+
+  .pay-row { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text); padding: 7px 0; border-bottom: 1px solid var(--hairline); opacity: 0; transform: translateX(-6px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .scene.active .pay-row:nth-child(2) { opacity: 1; transform: none; transition-delay: 0.10s; }
+  .scene.active .pay-row:nth-child(3) { opacity: 1; transform: none; transition-delay: 0.25s; }
+  .scene.active .pay-row:nth-child(4) { opacity: 1; transform: none; transition-delay: 0.40s; }
+  .prog-wrap { height: 8px; background: var(--surface-2); border-radius: 100px; overflow: hidden; margin: 14px 0; }
+  .prog { height: 100%; width: 0; background: var(--accent); border-radius: 100px; transition: width 1.4s cubic-bezier(0.3, 0.6, 0.2, 1) 0.5s; }
+  .scene.active .prog { width: 100%; }
+  .pay-net { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.85rem; color: var(--text); opacity: 0; transition: opacity 0.4s ease 1.7s; }
+  .scene.active .pay-net { opacity: 1; }
+  .pay-net .gold { font-size: 1.05rem; }
+
+  .exp { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text); padding: 9px 0; border-bottom: 1px solid var(--hairline); }
+  .exp-st { font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); opacity: 0; transform: translateX(6px); transition: opacity 0.4s ease, transform 0.4s ease; }
+  .scene.active .exp:nth-child(2) .exp-st { opacity: 1; transform: none; transition-delay: 0.20s; }
+  .scene.active .exp:nth-child(3) .exp-st { opacity: 1; transform: none; transition-delay: 0.45s; }
+  .scene.active .exp:nth-child(4) .exp-st { opacity: 1; transform: none; transition-delay: 0.70s; }
+  .scene.active .exp:nth-child(5) .exp-st { opacity: 1; transform: none; transition-delay: 0.95s; }
+  .scene.active .pay-row:nth-child(5) { opacity: 1; transform: none; transition-delay: 0.55s; }
+
+  .phone { position: absolute; right: -6px; bottom: -34px; width: 138px; height: 280px; background: var(--device-bg); border: 6px solid var(--device-edge); border-radius: 26px; box-shadow: var(--card-shadow); overflow: hidden; }
+  .phone-notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 46px; height: 7px; background: var(--device-edge); border-radius: 100px; z-index: 3; }
+  .phone-scr { position: absolute; inset: 0; padding: 26px 12px 12px; }
+  .ph-toast { position: absolute; top: 8px; left: 8px; right: 8px; display: flex; align-items: center; gap: 7px; font-size: 0.6rem; color: var(--text); background: var(--accent-soft); border: 1px solid var(--accent-soft); border-radius: 8px; padding: 7px 9px; z-index: 4; transform: translateY(-160%); animation: phToast 6.5s ease-in-out 1.2s infinite; }
+  .ph-toast i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  @keyframes phToast { 0%, 6% { transform: translateY(-160%); } 16%, 44% { transform: translateY(0); } 54%, 100% { transform: translateY(-160%); } }
+  .ph-head { font-family: var(--font-display); font-size: 0.74rem; color: var(--text); margin-bottom: 10px; }
+  .ph-card { background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px; padding: 12px; }
+  .ph-month { font-family: var(--font-mono); font-size: 0.58rem; color: var(--text-dim); }
+  .ph-net { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; color: var(--gold); line-height: 1.15; }
+  .ph-sub { font-size: 0.58rem; color: var(--text-dim); margin-bottom: 10px; }
+  .ph-actions { display: flex; gap: 6px; }
+  .ph-actions span { flex: 1; text-align: center; font-family: var(--font-mono); font-size: 0.56rem; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 6px 0; }
+  .ph-note { font-size: 0.56rem; color: var(--text-dim); text-align: center; margin-top: 12px; }
+
+  @media (max-width: 880px) {
+    .grid { grid-template-columns: 1fr; gap: 28px; }
+    .dots, .counter { display: none; }
+    .showcase { max-width: 460px; }
+    .phone { position: relative; right: auto; bottom: auto; width: 140px; height: 280px; margin: 18px auto 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .track { transition: none; }
+    #hero::before, .scroll-hint .arrow { animation: none; }
+    .bar-fill, .cbar .fill { transition: none; }
+    .lc-wipe { transition: none; clip-path: none; }
+    .scene, .scene * { transition: none !important; }
+    .ph-toast { animation: none; transform: none; }
+    .doc-sign { transition: none; }
+  }
+</style>
+</head>
+<body class="light">
+
+  <div class="wordmark"><span class="mark"></span> Codetech · Board Briefing</div>
+  <div class="counter" id="counter">01 / 17</div>
+  <button class="theme-toggle" id="themeToggle" title="Toggle light / dark (t)" aria-label="Toggle theme">☾</button>
+  <nav class="dots" aria-label="Slide navigation">
+    <button class="active" data-go="0" title="The thesis"></button>
+    <button data-go="1" title="Migration"></button>
+    <button data-go="2" title="Monthly P&L"></button>
+    <button data-go="3" title="Enterprise & Public Institutions"></button>
+    <button data-go="4" title="Municipal — e-Hub"></button>
+    <button data-go="5" title="Belize Postal"></button>
+    <button data-go="6" title="Folio"></button>
+    <button data-go="7" title="Ceiba HR"></button>
+    <button data-go="8" title="Commerce"></button>
+    <button data-go="9" title="Omnistore"></button>
+    <button data-go="10" title="Vistro"></button>
+    <button data-go="11" title="Compass — product"></button>
+    <button data-go="12" title="Compass — the vision"></button>
+    <button data-go="13" title="The Frontier — Edith"></button>
+    <button data-go="14" title="The ask"></button>
+    <button data-go="15" title="Where it comes from"></button>
+    <button data-go="16" title="Rest of 2026 · debt + cash"></button>
+  </nav>
+
+  <div class="deck">
+   <div class="track" id="track">
+
+    <!-- ===== 01 · HERO ===== -->
+    <section class="panel" id="hero">
+      <div class="hero-inner">
+        <div class="eyebrow reveal">2026 · Quarterly Review</div>
+        <h1 class="reveal d1">The hard part is<br /><span class="accent">already done.</span></h1>
+        <p class="hero-sub reveal d2">
+          We built — and sold — a full suite of compliant, cloud software for Belize's
+          businesses and government. Real clients pay for it today. The only thing left to
+          scale is the team to put it in front of more of them.
+        </p>
+        <div class="reveal d3">
+          <span class="ticker"><b>profitable</b> &nbsp;·&nbsp; <b>$4,000</b> → <b>$50</b>/mo hosting &nbsp;·&nbsp; we own the code</span>
+        </div>
+      </div>
+      <div class="scroll-hint reveal d4"><span class="arrow">→</span> use arrow keys, scroll, or the dots</div>
+    </section>
+
+    <!-- ===== 02 · MIGRATION ===== -->
+    <section class="panel" id="migration">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow reveal">The migration</div>
+          <h2 class="reveal d1">The month the<br />numbers turned green.</h2>
+          <p class="reveal d2">Through 2025, the ~<strong>$4,000/month</strong> Glide hosting bill held us at break-even — most months in the <strong>red</strong>.</p>
+          <p class="reveal d3">We migrated to <strong>Google Cloud</strong> over the new year. From early 2026 the same business runs in the <strong>black</strong> — no new products, no new staff to get there.</p>
+          <div class="proofline reveal d4"><span>2025 · red</span><span>Dec–Jan · migrated</span><span class="hl">2026 · profitable</span></div>
+        </div>
+
+        <div class="viz reveal d2">
+          <div class="chart-title">Monthly profit — June 2025 → June 2026 (incl. legacy Glide)</div>
+          <div class="linechart"><div class="lc-wipe">
+              <svg viewBox="0 0 560 272" role="img" aria-label="Monthly profit June 2025 to June 2026">
+              <line x1="52" y1="88" x2="548" y2="88" class="mc-grid"/>
+              <text x="6" y="91" class="mc-axis">$10k</text>
+              <line x1="52" y1="178" x2="548" y2="178" class="mc-grid"/>
+              <text x="6" y="181" class="mc-axis">$0</text>
+              <line x1="52" y1="223" x2="548" y2="223" class="mc-grid"/>
+              <text x="6" y="226" class="mc-axis">-$5k</text>
+              <line x1="52" y1="178" x2="548" y2="178" class="mc-zero"/>
+              <line x1="300" y1="16" x2="300" y2="232" class="mc-mark"/>
+              <text x="296" y="26" class="mc-marktext" text-anchor="end">migrated →</text>
+              <rect x="61" y="145" width="24" height="33" rx="3" class="mc-pos"/>
+              <text x="73" y="250" class="mc-axis s" text-anchor="middle">Jun</text>
+              <rect x="102" y="178" width="24" height="35" rx="3" class="mc-neg"/>
+              <text x="114" y="250" class="mc-axis s" text-anchor="middle">Jul</text>
+              <rect x="143" y="178" width="24" height="16" rx="3" class="mc-neg"/>
+              <text x="155" y="250" class="mc-axis s" text-anchor="middle">Aug</text>
+              <rect x="185" y="178" width="24" height="27" rx="3" class="mc-neg"/>
+              <text x="197" y="250" class="mc-axis s" text-anchor="middle">Sep</text>
+              <rect x="226" y="178" width="24" height="45" rx="3" class="mc-neg"/>
+              <text x="238" y="250" class="mc-axis s" text-anchor="middle">Oct</text>
+              <rect x="267" y="178" width="24" height="45" rx="3" class="mc-neg"/>
+              <text x="279" y="250" class="mc-axis s" text-anchor="middle">Nov</text>
+              <rect x="309" y="178" width="24" height="18" rx="3" class="mc-neg"/>
+              <text x="321" y="250" class="mc-axis s" text-anchor="middle">Jan</text>
+              <rect x="350" y="143" width="24" height="35" rx="3" class="mc-pos"/>
+              <text x="362" y="250" class="mc-axis s" text-anchor="middle">Feb</text>
+              <rect x="391" y="120" width="24" height="58" rx="3" class="mc-pos"/>
+              <text x="403" y="250" class="mc-axis s" text-anchor="middle">Mar</text>
+              <rect x="433" y="170" width="24" height="8" rx="3" class="mc-pos"/>
+              <text x="445" y="250" class="mc-axis s" text-anchor="middle">Apr</text>
+              <rect x="474" y="178" width="24" height="25" rx="3" class="mc-neg"/>
+              <text x="486" y="250" class="mc-axis s" text-anchor="middle">May</text>
+              <rect x="515" y="19" width="24" height="159" rx="3" class="mc-pos"/>
+              <text x="527" y="250" class="mc-axis s" text-anchor="middle">Jun</text>
+              <text x="527" y="14" class="mc-pos-t" text-anchor="middle">+$17.6k</text>
+              </svg>
+          </div></div>
+          <div class="legend"><span><i style="width:11px;height:11px;border-radius:3px;background:#13B981"></i> profit</span><span><i style="width:11px;height:11px;border-radius:3px;background:#E5564B"></i> loss</span></div>
+          <div class="illus">2025 incl. ~$4k/mo legacy Glide hosting (paid outside the books). Jun ’26 includes catch-up billing. Recorded actuals + Glide.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 03 · MONTHLY BREAKDOWN (P&L) ===== -->
+    <section class="panel" id="pnl">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow reveal">Where we are now</div>
+          <h2 class="reveal d1">What we earn<br />every month.</h2>
+          <p class="reveal d2">At today's recurring contracts — postal, municipal, BCMS, Vistro, Compass, Folio — money comes in around <strong>$8,000 a month</strong>.</p>
+          <p class="reveal d3">Against a lean budget — salaries, connectivity, hosting, utilities — we keep a real margin <strong>every month</strong>, before any expansion.</p>
+          <div class="proofline reveal d4"><span>$8,060 in</span><span>$3,680 out</span><span class="hl">$4,380 net / mo</span></div>
+        </div>
+
+        <div class="viz reveal d2">
+          <div class="chart-title">Monthly revenue</div>
+          <div class="pnl">
+            <div class="row"><span class="lbl">Postal</span><span class="v">$3,000</span></div>
+            <div class="row"><span class="lbl">Municipal · e-Hub</span><span class="v">$2,500</span></div>
+            <div class="row"><span class="lbl">BCMS</span><span class="v">$1,500</span></div>
+            <div class="row"><span class="lbl">Folio</span><span class="v">$700</span></div>
+            <div class="row"><span class="lbl">Vistro</span><span class="v">$120</span></div>
+            <div class="row"><span class="lbl">Compass</span><span class="v">$240</span></div>
+            <div class="row net"><span class="lbl">Total revenue / mo</span><span class="v" data-prefix="$" data-count="8060">$0</span></div>
+          </div>
+          <div class="divline"></div>
+          <div class="chart-title">Monthly budget — expenses</div>
+          <div class="pnl">
+            <div class="row"><span class="lbl">Salaries</span><span class="v">($2,000)</span></div>
+            <div class="row"><span class="lbl">Internet &amp; phone</span><span class="v">($580)</span></div>
+            <div class="row"><span class="lbl">Web services</span><span class="v">($500)</span></div>
+            <div class="row"><span class="lbl">Utilities</span><span class="v">($600)</span></div>
+            <div class="row net"><span class="lbl">Total expenses / mo</span><span class="v">($3,680)</span></div>
+          </div>
+          <div class="cost-total"><span>Net / month</span><span class="ct-to" style="font-size:1.15rem">$4,380</span></div>
+          <div class="illus">Recurring run-rate at current contracts (BZD). Adding Ceiba HR &amp; Time Card lifts this further.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 04 · SECTOR DIVIDER (Enterprise & Public Institutions) ===== -->
+    <section class="panel" id="sec-gov">
+      <div class="divider-inner">
+        <div class="eyebrow reveal">The opportunity · Sector 01</div>
+        <h1 class="div-title reveal d1">Enterprise &amp; Public Institutions</h1>
+        <p class="div-sub reveal d2">Our biggest, stickiest contracts — high-value, recurring, high-trust. <strong>This is where we focus first.</strong></p>
+        <div class="sector-row reveal d3">
+          <div class="sec-card"><span class="sec-n">Municipal — e-Hub</span><span class="sec-d">Tax, lands, traffic, licenses &amp; renewals</span><span class="sec-tag live">Live · $4,000/mo</span></div>
+          <div class="sec-card"><span class="sec-n">Belize Postal</span><span class="sec-d">Custom national operations</span><span class="sec-tag live">Live · $3,000/mo</span></div>
+          <div class="sec-card"><span class="sec-n">Folio</span><span class="sec-d">E-signing for schools &amp; business</span><span class="sec-tag live">Live · $7,200/yr</span></div>
+          <div class="sec-card"><span class="sec-n">Ceiba HR</span><span class="sec-d">Payroll &amp; HR for enterprise</span><span class="sec-tag">From $600/mo</span></div>
+        </div>
+        <div class="div-stat reveal d4"><b>$7,600/mo</b> already recurring here — before we expand.</div>
+      </div>
+    </section>
+
+    <!-- ===== 05 · PRODUCT (Municipal — e-Hub demo) ===== -->
+    <section class="panel" id="municipal" style="--accent: #FE7B0B">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 01 · Municipal — e-Hub <span class="badge">FLAGSHIP</span></div>
+          <h2 class="reveal d1">Run a council's<br />whole revenue.</h2>
+          <div class="bigprice reveal d2"><div class="n">$4,000<small> /mo</small></div><div class="s">2 councils live · Orange Walk + Blue Creek · ~$48k/yr</div></div>
+          <p class="reveal d3">Property &amp; income tax, lands, traffic &amp; wardens, license and vehicle renewals — one system, near-zero support after a ~2-week setup.</p>
+          <div class="market reveal d4">Next: <span>Corozal, San Ignacio &amp; every other council →</span></div>
+        </div>
+
+        <div class="showcase reveal d2">
+          <div class="win demo-win">
+            <div class="win-bar">
+              <div class="win-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+              <span class="win-title">e-Hub — municipal revenue</span>
+            </div>
+            <div class="win-tabs">
+              <button class="win-tab on">Revenue</button>
+              <button class="win-tab">Property</button>
+              <button class="win-tab">Traffic</button>
+              <button class="win-tab">Licenses</button>
+            </div>
+            <div class="win-body">
+              <div class="scene active">
+                <div class="sc-title">Council revenue · June</div>
+                <div class="pay-row"><span>Property tax</span><span class="mono">$18,400</span></div>
+                <div class="pay-row"><span>Business &amp; income tax</span><span class="mono">$12,250</span></div>
+                <div class="pay-row"><span>Traffic &amp; fines</span><span class="mono">$4,820</span></div>
+                <div class="pay-net"><span>Collected this month</span><span class="mono gold">$35,470</span></div>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Property &amp; lands · Parcel 142</div>
+                <div class="pay-row"><span>Owner</span><span class="mono">M. Cano</span></div>
+                <div class="pay-row"><span>Land assessment</span><span class="mono">$84,000</span></div>
+                <div class="pay-row"><span>Tax due</span><span class="mono">$420</span></div>
+                <div class="pay-net"><span>Status</span><span class="mono gold">Notice sent ✓</span></div>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Traffic tickets · wardens</div>
+                <div class="exp"><span>#2041 · speeding</span><span class="exp-st">Paid ✓</span></div>
+                <div class="exp"><span>#2042 · no permit</span><span class="exp-st">Paid ✓</span></div>
+                <div class="exp"><span>#2043 · parking</span><span class="exp-st">Paid ✓</span></div>
+                <div class="pay-net"><span>Collected today</span><span class="mono gold">$310</span></div>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Licenses &amp; renewals</div>
+                <div class="exp"><span>Liquor · Bar La Vega</span><span class="exp-st">Renewed ✓</span></div>
+                <div class="exp"><span>Vehicle · C-1182</span><span class="exp-st">Renewed ✓</span></div>
+                <div class="exp"><span>Business · Tienda Sol</span><span class="exp-st">Renewed ✓</span></div>
+                <div class="pay-net"><span>Processed</span><span class="mono gold">3 today</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-scr">
+              <div class="ph-toast"><i></i> Notice from the Council</div>
+              <div class="ph-head">Orange Walk Council</div>
+              <div class="ph-card">
+                <div class="ph-month">Property tax · 2026</div>
+                <div class="ph-net">$420</div>
+                <div class="ph-sub">Due — pay online</div>
+                <div class="ph-actions"><span>Pay now</span><span>Receipt</span></div>
+              </div>
+              <div class="ph-note">Pay tax, tickets &amp; licenses online</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 06 · PRODUCT (Belize Postal — anchor) ===== -->
+    <section class="panel" id="postal" style="--accent: #4A7CB5">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 01 · Belize Postal <span class="badge">ANCHOR</span></div>
+          <h2 class="reveal d1">We run<br />Belize Postal.</h2>
+          <p class="reveal d2">A fully custom system for the national postal service — proof we can build and run <strong>mission-critical operations</strong> end to end.</p>
+          <p class="reveal d3">It's our most customized build, so we don't resell it — but at <strong>$3,000/month</strong> it's a flagship reference that opens doors across government.</p>
+          <div class="market reveal d4">The credibility that wins the next <span>ministry &amp; council →</span></div>
+        </div>
+
+        <div class="viz reveal d2">
+          <div class="stat-row">
+            <div class="stat big"><div class="num" data-prefix="$" data-count="3000" data-suffix="/mo">$0</div><div class="label">our largest single contract</div></div>
+            <div class="stat small"><div class="num">Live</div><div class="label">in production<br />every day</div></div>
+          </div>
+          <div class="chart-title">Why it matters</div>
+          <div class="pnl">
+            <div class="row"><span class="lbl">Built</span><span class="v">fully custom, end-to-end</span></div>
+            <div class="row"><span class="lbl">Reselling potential</span><span class="v">low (bespoke)</span></div>
+            <div class="row net"><span class="lbl">Strategic value</span><span class="v">flagship reference</span></div>
+          </div>
+          <div class="illus">Not an expansion play — a capability showcase that earns government trust.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 07 · PRODUCT (Folio) ===== -->
+    <section class="panel" id="folio" style="--accent: #14A8A0">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 01 · Folio <span class="badge">FLAGSHIP</span></div>
+          <h2 class="reveal d1">Our DocuSign —<br />paperwork, signed.</h2>
+          <p class="reveal d2">Secure document signing for <strong>schools, universities, and businesses</strong> that want to automate paperwork — without a heavy HR system.</p>
+          <p class="reveal d3">Templates, routing, and a full audit trail at a fraction of DocuSign's per-seat price. The proof: a client paid the <strong>entire year up front — $7,200.</strong></p>
+          <div class="market reveal d4">Sold monthly · <span>scales with users →</span></div>
+        </div>
+
+        <div class="viz reveal d2">
+          <div class="doc">
+            <div class="doc-bar">Board-Resolution-2026.pdf</div>
+            <div class="doc-lines"><i></i><i></i><i></i><i></i></div>
+            <div class="doc-sign">Signed ✓</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat big"><div class="num" data-prefix="$" data-count="7200">$0</div><div class="label">paid up front — for the full year</div></div>
+            <div class="stat small"><div class="num" data-prefix="$" data-count="600" data-suffix="/mo">$0</div><div class="label">equivalent · 19 users</div></div>
+          </div>
+          <div class="proofline"><span>500+ forms &amp; signatures generated</span><span class="hl">19 users on the system</span></div>
+          <div class="illus">A fraction of DocuSign's per-seat cost. Figures from a live client.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 08 · PRODUCT MODULE (Ceiba HR — animated demo) ===== -->
+    <section class="panel" id="ceiba" style="--accent: #2B7DE0">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 01 · Ceiba HR <span class="badge">ENTERPRISE</span></div>
+          <h2 class="reveal d1">Payroll in minutes,<br />not days.</h2>
+          <div class="bigprice reveal d2"><div class="n">$600<small> /mo</small></div><div class="s">1 client live · scales with client size</div></div>
+          <p class="reveal d3">Forms, schedules, payroll, and government tax &amp; social-security exports — and every employee gets payslips on their phone.</p>
+          <div class="market reveal d4">Big target: <span>Belize Sugar Industry — hundreds of staff, still on paper →</span></div>
+        </div>
+
+        <div class="showcase reveal d2">
+          <div class="win demo-win" id="ceibaWin">
+            <div class="win-bar">
+              <div class="win-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+              <span class="win-title">Ceiba HR — enterprise</span>
+            </div>
+            <div class="win-tabs">
+              <button class="win-tab on">Forms</button>
+              <button class="win-tab">Schedule</button>
+              <button class="win-tab">Payroll</button>
+              <button class="win-tab">Tax export</button>
+            </div>
+            <div class="win-body">
+              <div class="scene s-form active">
+                <div class="sc-title">New employee</div>
+                <div class="field"><span class="fl">Full name</span><div class="fv"><i class="fillbar" style="--w:82%"></i></div></div>
+                <div class="field"><span class="fl">Position</span><div class="fv"><i class="fillbar" style="--w:60%"></i></div></div>
+                <div class="field"><span class="fl">Monthly salary</span><div class="fv"><i class="fillbar" style="--w:46%"></i></div></div>
+                <div class="field"><span class="fl">Start date</span><div class="fv"><i class="fillbar" style="--w:54%"></i></div></div>
+                <button class="sc-btn">Save employee ✓</button>
+              </div>
+              <div class="scene s-sched">
+                <div class="sc-title">This week's schedule</div>
+                <div class="week">
+                  <div class="day"><i class="blk" style="--h:70%"></i><span>Mon</span></div>
+                  <div class="day"><i class="blk" style="--h:90%"></i><span>Tue</span></div>
+                  <div class="day"><i class="blk" style="--h:55%"></i><span>Wed</span></div>
+                  <div class="day"><i class="blk gold" style="--h:80%"></i><span>Thu</span></div>
+                  <div class="day"><i class="blk" style="--h:65%"></i><span>Fri</span></div>
+                </div>
+                <div class="sc-foot">Clock-in / out synced automatically</div>
+              </div>
+              <div class="scene s-pay">
+                <div class="sc-title">Run payroll · June</div>
+                <div class="pay-row"><span>M. Tzul</span><span class="mono">$2,450</span></div>
+                <div class="pay-row"><span>A. Pérez</span><span class="mono">$1,980</span></div>
+                <div class="pay-row"><span>K. Lin</span><span class="mono">$3,120</span></div>
+                <div class="prog-wrap"><div class="prog"></div></div>
+                <div class="pay-net"><span>Net payout</span><span class="mono gold">$49,280</span></div>
+              </div>
+              <div class="scene s-tax">
+                <div class="sc-title">Government exports</div>
+                <div class="exp"><span>Income Tax · GOB</span><span class="exp-st">Exported ✓</span></div>
+                <div class="exp"><span>Social Security</span><span class="exp-st">Exported ✓</span></div>
+                <div class="exp"><span>Bank transfer file</span><span class="exp-st">Exported ✓</span></div>
+                <button class="sc-btn">Export all</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-scr">
+              <div class="ph-toast"><i></i> New payslip emailed</div>
+              <div class="ph-head">My payslips</div>
+              <div class="ph-card">
+                <div class="ph-month">June 2026</div>
+                <div class="ph-net">$2,450</div>
+                <div class="ph-sub">Net pay</div>
+                <div class="ph-actions"><span>Download</span><span>Print</span></div>
+              </div>
+              <div class="ph-note">Sent to you automatically</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 09 · SECTOR DIVIDER (Commerce) ===== -->
+    <section class="panel" id="sec-biz">
+      <div class="divider-inner">
+        <div class="eyebrow reveal">The opportunity · Sector 02</div>
+        <h1 class="div-title reveal d1">Commerce</h1>
+        <p class="div-sub reveal d2">Faster, self-serve revenue — <strong>what we sign while chasing the big deals.</strong></p>
+        <div class="sector-row three reveal d3">
+          <div class="sec-card"><span class="sec-n">Omnistore</span><span class="sec-d">Storefront, invoicing &amp; payments</span><span class="sec-tag live">2 signed</span></div>
+          <div class="sec-card"><span class="sec-n">Vistro</span><span class="sec-d">Restaurant POS &amp; ordering</span><span class="sec-tag live">2 signed</span></div>
+          <div class="sec-card"><span class="sec-n">Compass</span><span class="sec-d">Billing for groups of schools &amp; waterboards</span><span class="sec-tag live">Live · $240/mo</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 10 · PRODUCT (Omnistore) ===== -->
+    <section class="panel" id="omnistore" style="--accent: #7047EC">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 02 · Omnistore <span class="badge">SELF-SERVE</span></div>
+          <h2 class="reveal d1">A whole store,<br />out of the box.</h2>
+          <div class="bigprice reveal d2"><div class="n">$60–180<small> /mo</small></div><div class="s">small business → schools</div></div>
+          <p class="reveal d3">Storefront, POS, terminal, and inventory — a business takes payments, sells online, and tracks stock from day one.</p>
+          <div class="market reveal d4">From small shops to <span>school stores &amp; canteens →</span></div>
+        </div>
+
+        <div class="showcase reveal d2">
+          <div class="win demo-win">
+            <div class="win-bar">
+              <div class="win-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+              <span class="win-title">Omnistore</span>
+            </div>
+            <div class="win-tabs">
+              <button class="win-tab on">Storefront</button>
+              <button class="win-tab">POS</button>
+              <button class="win-tab">Inventory</button>
+            </div>
+            <div class="win-body">
+              <div class="scene active">
+                <div class="sc-title">Storefront</div>
+                <div class="pay-row"><span>Blue T-Shirt</span><span class="mono">$25</span></div>
+                <div class="pay-row"><span>Cap · Navy</span><span class="mono">$15</span></div>
+                <div class="pay-row"><span>Tote Bag</span><span class="mono">$18</span></div>
+                <button class="sc-btn">Add to cart ✓</button>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Point of sale</div>
+                <div class="pay-row"><span>Blue T-Shirt ×2</span><span class="mono">$50</span></div>
+                <div class="pay-row"><span>Cap · Navy</span><span class="mono">$15</span></div>
+                <div class="prog-wrap"><div class="prog"></div></div>
+                <div class="pay-net"><span>Charge card</span><span class="mono gold">$65</span></div>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Inventory</div>
+                <div class="exp"><span>Blue T-Shirt</span><span class="exp-st">42 in stock</span></div>
+                <div class="exp"><span>Cap · Navy</span><span class="exp-st">8 — low</span></div>
+                <div class="exp"><span>Tote Bag</span><span class="exp-st">120 in stock</span></div>
+                <div class="pay-net"><span>Auto-synced</span><span class="mono gold">live</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-scr">
+              <div class="ph-toast"><i></i> New online order</div>
+              <div class="ph-head">Your storefront</div>
+              <div class="ph-card">
+                <div class="ph-month">Order #1042</div>
+                <div class="ph-net">$65</div>
+                <div class="ph-sub">Paid · ship today</div>
+                <div class="ph-actions"><span>Fulfill</span><span>Receipt</span></div>
+              </div>
+              <div class="ph-note">Sell online, automatically</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 11 · PRODUCT (Vistro) ===== -->
+    <section class="panel" id="vistro" style="--accent: #DC2626">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 02 · Vistro <span class="badge">SELF-SERVE</span></div>
+          <h2 class="reveal d1">Run the whole<br />restaurant.</h2>
+          <div class="bigprice reveal d2"><div class="n">$120<small> /mo</small></div><div class="s">2 restaurants live · $60 each</div></div>
+          <p class="reveal d3">POS, tablet table-ordering, and a storefront they drop into WhatsApp to take orders — no hardware beyond a thermal printer.</p>
+          <div class="market reveal d4">Sign, leave the printer, <span>collect monthly →</span></div>
+        </div>
+
+        <div class="showcase reveal d2">
+          <div class="win demo-win">
+            <div class="win-bar">
+              <div class="win-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+              <span class="win-title">Vistro</span>
+            </div>
+            <div class="win-tabs">
+              <button class="win-tab on">Orders</button>
+              <button class="win-tab">Tables</button>
+              <button class="win-tab">Menu</button>
+            </div>
+            <div class="win-body">
+              <div class="scene active">
+                <div class="sc-title">Live orders</div>
+                <div class="pay-row"><span>Table 4 · Tacos ×3</span><span class="mono">$18</span></div>
+                <div class="pay-row"><span>Table 2 · Burger</span><span class="mono">$12</span></div>
+                <div class="pay-row"><span>WhatsApp · Pizza</span><span class="mono">$22</span></div>
+                <button class="sc-btn">Print to kitchen ✓</button>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Table ordering · tablet</div>
+                <div class="exp"><span>Table 1</span><span class="exp-st">Ordering…</span></div>
+                <div class="exp"><span>Table 4</span><span class="exp-st">Sent ✓</span></div>
+                <div class="exp"><span>Table 7</span><span class="exp-st">Paid ✓</span></div>
+                <div class="pay-net"><span>Open tables</span><span class="mono gold">3</span></div>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Menu</div>
+                <div class="pay-row"><span>Tacos (3)</span><span class="mono">$6</span></div>
+                <div class="pay-row"><span>Burger</span><span class="mono">$12</span></div>
+                <div class="pay-row"><span>Pizza</span><span class="mono">$22</span></div>
+                <div class="pay-net"><span>Edit anytime</span><span class="mono gold">live</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-scr">
+              <div class="ph-toast"><i></i> New WhatsApp order</div>
+              <div class="ph-head">La Cocina</div>
+              <div class="ph-card">
+                <div class="ph-month">Order · Table 4</div>
+                <div class="ph-net">$18</div>
+                <div class="ph-sub">Tacos ×3 · dine-in</div>
+                <div class="ph-actions"><span>Accept</span><span>Print</span></div>
+              </div>
+              <div class="ph-note">Order via a WhatsApp link</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 12 · PRODUCT (Compass — demo) ===== -->
+    <section class="panel" id="compass" style="--accent: #219EBC">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 02 · Compass <span class="badge">VOLUME</span></div>
+          <h2 class="reveal d1">Bill a whole<br />school in minutes.</h2>
+          <div class="bigprice reveal d2"><div class="n">$240<small> /mo</small></div><div class="s">4 clients live · $60 each · near-zero support</div></div>
+          <p class="reveal d3">Create invoices with line items, send them in bulk, mark payments — customers pay from a portal on their phone.</p>
+          <div class="market reveal d4">Live today: <span>schools &amp; waterboards →</span></div>
+        </div>
+
+        <div class="showcase reveal d2">
+          <div class="win demo-win">
+            <div class="win-bar">
+              <div class="win-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+              <span class="win-title">Compass — billing</span>
+            </div>
+            <div class="win-tabs">
+              <button class="win-tab on">Invoice</button>
+              <button class="win-tab">Bulk</button>
+              <button class="win-tab">Payments</button>
+            </div>
+            <div class="win-body">
+              <div class="scene active">
+                <div class="sc-title">New invoice · San Felipe School</div>
+                <div class="pay-row"><span>Billing software</span><span class="mono">$40</span></div>
+                <div class="pay-row"><span>Reports module</span><span class="mono">$12</span></div>
+                <div class="pay-row"><span>Email &amp; SMS</span><span class="mono">$8</span></div>
+                <div class="pay-net"><span>Invoice total</span><span class="mono gold">$60</span></div>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Create invoices in bulk</div>
+                <div class="exp"><span>San Felipe School</span><span class="exp-st">Invoiced ✓</span></div>
+                <div class="exp"><span>Guinea Grass School</span><span class="exp-st">Invoiced ✓</span></div>
+                <div class="exp"><span>San Narciso Waterboard</span><span class="exp-st">Invoiced ✓</span></div>
+                <div class="exp"><span>Belize Motor Ventures</span><span class="exp-st">Invoiced ✓</span></div>
+                <div class="prog-wrap"><div class="prog"></div></div>
+                <div class="pay-net"><span>4 invoices sent</span><span class="mono gold">$240</span></div>
+              </div>
+              <div class="scene">
+                <div class="sc-title">Mark payments · June</div>
+                <div class="exp"><span>San Felipe School</span><span class="exp-st">Paid ✓</span></div>
+                <div class="exp"><span>Guinea Grass School</span><span class="exp-st">Paid ✓</span></div>
+                <div class="exp"><span>San Narciso Waterboard</span><span class="exp-st">Paid ✓</span></div>
+                <div class="exp"><span>Belize Motor Ventures</span><span class="exp-st">Paid ✓</span></div>
+                <div class="pay-net"><span>Collected</span><span class="mono gold">$240/mo</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-scr">
+              <div class="ph-toast"><i></i> New invoice from Compass</div>
+              <div class="ph-head">San Felipe School</div>
+              <div class="ph-card">
+                <div class="ph-month">June 2026 · due</div>
+                <div class="ph-net">$60</div>
+                <div class="ph-sub">Tap to pay</div>
+                <div class="ph-actions"><span>Pay now</span><span>PDF</span></div>
+              </div>
+              <div class="ph-note">Emailed automatically</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 11 · PRODUCT (Compass — the vision) ===== -->
+    <section class="panel" id="compass-vision" style="--accent: #219EBC">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow em reveal">Sector 02 · Compass — the vision</div>
+          <h2 class="reveal d1">Don't sign schools.<br />Lock divisions.</h2>
+          <p class="reveal d2">Today: 4 clients at $60/month — San Felipe, Guinea Grass, San Narciso Waterboard, Belize Motor Ventures — at near-zero support.</p>
+          <p class="reveal d3">The play isn't one school at a time. It's whole <strong>divisions</strong> — Catholic, Nazarene, Pentecostal — and entire <strong>districts of waterboards</strong>, all at $60/month each.</p>
+          <div class="market reveal d4">~20 Catholic schools per district · 6 districts →</div>
+        </div>
+
+        <div class="viz reveal d2">
+          <div class="stat-row">
+            <div class="stat big"><div class="num" data-prefix="$" data-count="240" data-suffix="/mo">$0</div><div class="label">recurring today · 4 clients</div></div>
+            <div class="stat small"><div class="num" data-prefix="$" data-count="60">$0</div><div class="label">per client / month<br />near-zero support</div></div>
+          </div>
+          <div class="chart-title">The expansion math — lock divisions</div>
+          <div class="cat">
+            <div class="cat-h"><span class="cn">Today</span><span class="cat-note">4 clients</span></div>
+            <div class="cbar"><div class="track"><div class="fill after" data-w="2%"></div></div><span class="cv">$240</span></div>
+          </div>
+          <div class="cat">
+            <div class="cat-h"><span class="cn">1 district</span><span class="cat-note">~20 schools</span></div>
+            <div class="cbar"><div class="track"><div class="fill after" data-w="8%"></div></div><span class="cv">$1,200</span></div>
+          </div>
+          <div class="cat">
+            <div class="cat-h"><span class="cn">Catholic division</span><span class="cat-note">~120 schools · 6 districts</span></div>
+            <div class="cbar"><div class="track"><div class="fill after" data-w="48%"></div></div><span class="cv">$7,200</span></div>
+          </div>
+          <div class="cat">
+            <div class="cat-h"><span class="cn">+ Nazarene, Pentecostal &amp; waterboards</span></div>
+            <div class="cbar"><div class="track"><div class="fill after" data-w="100%"></div></div><span class="cv gold">$15,000+</span></div>
+          </div>
+          <div class="illus">$60/mo each · same price, near-zero support · illustrative scale.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 12 · SECTOR (The Frontier — Edith) ===== -->
+    <section class="panel" id="frontier" style="--accent: #7C6BBE">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow reveal">The opportunity · Sector 03</div>
+          <h2 class="reveal d1">The Frontier:<br />on-device AI.</h2>
+          <p class="reveal d2"><strong>Edith</strong> runs AI on the company's own machines — online or offline. Staff query their own files and drives; it writes reports and powers support, with no per-seat cloud fees.</p>
+          <p class="reveal d3">The upside is the biggest of all — but it's the <strong>next phase</strong>, not the next quarter.</p>
+          <div class="market reveal d4">Plan: <span>pilot now · push in Q4 →</span></div>
+        </div>
+        <div class="viz reveal d2">
+          <div class="bigchange"><span class="bc-to" style="font-size:2.1rem">Edith</span><span class="bc-pct">PILOT · Q4</span></div>
+          <div class="chart-title" style="margin-top:20px">What people do with it</div>
+          <div class="exp"><span>"Categorize my whole photo drive by location"</span></div>
+          <div class="exp"><span>"Read our files and draft the HR report"</span></div>
+          <div class="exp"><span>"Answer customer questions from our docs"</span></div>
+          <div class="illus">Not part of the 90-day plan — shown so the board sees what's next.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 13 · THE ASK (investment) ===== -->
+    <section class="panel" id="ask">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow reveal">The ask</div>
+          <h2 class="reveal d1">Fund one salesperson<br />for the quarter.</h2>
+          <p class="reveal d2">The products are built and profitable. We want to fund <strong>one salesperson at $1,500/month for three months — $4,500</strong> — to close what's already in reach.</p>
+          <p class="reveal d3">We're not raising to build. This is pure go-to-market: turning finished software into <strong>signed, recurring contracts</strong>.</p>
+          <div class="proofline reveal d4"><span>invest $4,500 / quarter</span><span>target $3,660 / mo new</span><span class="hl">$43,920 / yr</span></div>
+        </div>
+
+        <div class="viz reveal d2">
+          <div class="stat-row">
+            <div class="stat big"><div class="num" data-prefix="$" data-count="4500">$0</div><div class="label">total ask · the quarter<br />1 salesperson</div></div>
+            <div class="stat small"><div class="num" data-prefix="$" data-count="3660" data-suffix="/mo">$0</div><div class="label">target new recurring<br />$43,920 / year</div></div>
+          </div>
+          <div class="chart-title">The investment</div>
+          <div class="pnl">
+            <div class="row"><span class="lbl">Salesperson · $1,500 / month</span><span class="v">$1,500</span></div>
+            <div class="row"><span class="lbl">× 3 months</span><span class="v">$4,500</span></div>
+            <div class="row net"><span class="lbl">Total invested this quarter</span><span class="v" data-prefix="$" data-count="4500">$0</span></div>
+          </div>
+          <div class="illus">Commission for sales &amp; marketing to be agreed separately (marketing runs on commission).</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 14 · WHERE THE FUNDS COME FROM ===== -->
+    <section class="panel" id="funds">
+      <div class="grid">
+        <div class="p-body">
+          <div class="eyebrow reveal">Where it comes from</div>
+          <h2 class="reveal d1">What the salesperson<br />brings in.</h2>
+          <p class="reveal d2">One salesperson, <strong>nine new contracts</strong> over the quarter — across the products that close fastest, plus one council deal.</p>
+          <p class="reveal d3">The council deal alone covers the hire. Everything else is upside — and <strong>all of it recurs</strong>.</p>
+          <div class="proofline reveal d4"><span>9 new clients</span><span>$3,660 / mo new</span><span class="hl">covers the hire 2.4×</span></div>
+        </div>
+
+        <div class="viz reveal d2">
+          <div class="chart-title">Expected new recurring — by service</div>
+          <div class="qtab">
+            <div class="qh l">Service</div><div class="qh">Clients</div><div class="qh">$/mo ea</div><div class="qh">New $/mo</div>
+            <div class="ql">Council · Municipal</div><div class="qv">1</div><div class="qv">$2,000</div><div class="qv">$2,000</div>
+            <div class="ql">Folio</div><div class="qv">1</div><div class="qv">$700</div><div class="qv">$700</div>
+            <div class="ql">Ceiba HR</div><div class="qv">1</div><div class="qv">$600</div><div class="qv">$600</div>
+            <div class="ql">Omnistore</div><div class="qv">3</div><div class="qv">$60</div><div class="qv">$180</div>
+            <div class="ql">Vistro</div><div class="qv">2</div><div class="qv">$60</div><div class="qv">$120</div>
+            <div class="ql">Compass</div><div class="qv">1</div><div class="qv">$60</div><div class="qv">$60</div>
+            <div class="qsep"></div>
+            <div class="ql net">Total new recurring</div><div class="qv net">9</div><div class="qv net">—</div><div class="qv net">$3,660</div>
+          </div>
+          <div class="illus">$3,660/mo = $43,920/yr, covering the salesperson 2.4×. Pipeline builds Jun–Jul; closings land Aug–Sep.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 15 · QUARTERLY BREAKDOWN ===== -->
+    <section class="panel" id="quarter">
+      <div style="width: 100%; max-width: 1080px;">
+        <div class="eyebrow reveal">Use of funds · rest of 2026</div>
+        <h2 class="reveal d1" style="margin-bottom: 12px;">Pay down debt — and still grow cash.</h2>
+        <p class="reveal d2" style="max-width: none; margin-bottom: 4px;">Pay <strong>60% of our loans now ($6,600)</strong> from the cash influx — no interest on either loan — then clear the rest at <strong>~$733/month</strong> through December, carrying the new sales agent the whole way.</p>
+        <div class="proofline reveal d3" style="margin: 14px 0 20px;"><span>June: $29,595 cash</span><span>− $6,600 (60% of loans)</span><span class="hl">$22,995 carried forward</span></div>
+        <div class="qtab w7 reveal d3">
+          <div class="qh l">Per month (BZD)</div><div class="qh">Jul</div><div class="qh">Aug</div><div class="qh">Sep</div><div class="qh">Oct</div><div class="qh">Nov</div><div class="qh">Dec</div>
+          <div class="ql">Total revenue</div><div class="qv">$8,060</div><div class="qv">$9,720</div><div class="qv">$11,720</div><div class="qv">$11,720</div><div class="qv">$11,720</div><div class="qv">$11,720</div>
+          <div class="ql">Operating budget</div><div class="qv">($3,680)</div><div class="qv">($3,680)</div><div class="qv">($3,680)</div><div class="qv">($3,680)</div><div class="qv">($3,680)</div><div class="qv">($3,680)</div>
+          <div class="ql">Sales agent</div><div class="qv">($1,500)</div><div class="qv">($1,500)</div><div class="qv">($1,500)</div><div class="qv">($1,500)</div><div class="qv">($1,500)</div><div class="qv">($1,500)</div>
+          <div class="ql">Loan repayment</div><div class="qv">($733)</div><div class="qv">($733)</div><div class="qv">($733)</div><div class="qv">($733)</div><div class="qv">($733)</div><div class="qv">($733)</div>
+          <div class="qsep"></div>
+          <div class="ql net">Net / month</div><div class="qv net">$2,147</div><div class="qv net">$3,807</div><div class="qv net">$5,807</div><div class="qv net">$5,807</div><div class="qv net">$5,807</div><div class="qv net">$5,807</div>
+          <div class="ql qc">Cash · month-end</div><div class="qv qc">$25,142</div><div class="qv qc">$28,949</div><div class="qv qc">$34,756</div><div class="qv qc">$40,563</div><div class="qv qc">$46,370</div><div class="qv qc">$52,177</div>
+        </div>
+        <div class="illus reveal d4" style="text-align: center; margin-top: 14px;">No interest · 60% paid today · debt-free by December · cash climbs ~$23K → ~$52K · dividends on the table at year-end. New revenue held flat after Sep (conservative).</div>
+      </div>
+    </section>
+
+   </div>
+  </div>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const track = document.getElementById('track');
+  const panels = [...document.querySelectorAll('.panel')];
+  const dots = [...document.querySelectorAll('.dots button')];
+  const counter = document.getElementById('counter');
+  let current = 0, lock = false;
+
+  function startCount(el) {
+    if (el.dataset.done) return;
+    el.dataset.done = '1';
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    const prefix = el.dataset.prefix || '';
+    if (reduce) { el.textContent = prefix + target.toLocaleString() + suffix; return; }
+    const dur = 1100; let start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = prefix + Math.round(target * eased).toLocaleString() + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function activate(i) {
+    panels[i].querySelectorAll('.reveal').forEach((el) => {
+      el.classList.add('in');
+      el.querySelectorAll('[data-count]').forEach(startCount);
+      if (el.matches('[data-count]')) startCount(el);
+      el.querySelectorAll('.fill, .bar-fill').forEach((b) => { if (b.dataset.w) b.style.width = b.dataset.w; });
+    });
+  }
+
+  function go(i) {
+    i = Math.max(0, Math.min(panels.length - 1, i));
+    current = i;
+    track.style.transform = 'translateX(-' + (i * 100) + 'vw)';
+    dots.forEach((d, n) => d.classList.toggle('active', n === i));
+    counter.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(panels.length).padStart(2, '0');
+    activate(i);
+    stopAllDemos();
+    startDemosIn(panels[i]);
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(current + 1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(current - 1); }
+  });
+  window.addEventListener('wheel', (e) => {
+    if (lock) return;
+    if (Math.abs(e.deltaY) < 24 && Math.abs(e.deltaX) < 24) return;
+    lock = true;
+    go(current + ((e.deltaY > 0 || e.deltaX > 0) ? 1 : -1));
+    setTimeout(() => { lock = false; }, reduce ? 120 : 850);
+  }, { passive: true });
+  dots.forEach((d) => d.addEventListener('click', () => go(parseInt(d.dataset.go, 10))));
+
+  let tx = 0;
+  window.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50) go(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  // ---- product demos (generalized: any .demo-win) ----
+  const demos = [...document.querySelectorAll('.demo-win')].map((win) => ({
+    win,
+    scenes: [...win.querySelectorAll('.scene')],
+    tabs: [...win.querySelectorAll('.win-tab')],
+    idx: 0,
+    timer: null
+  }));
+  function showSceneFor(d, i) {
+    d.idx = i;
+    d.scenes.forEach((s, n) => s.classList.toggle('active', n === i));
+    d.tabs.forEach((t, n) => t.classList.toggle('on', n === i));
+  }
+  function startDemosIn(panel) {
+    demos.forEach((d) => {
+      if (!panel.contains(d.win)) return;
+      showSceneFor(d, 0);
+      if (reduce) return;
+      clearInterval(d.timer);
+      d.timer = setInterval(() => showSceneFor(d, (d.idx + 1) % d.scenes.length), 3000);
+    });
+  }
+  function stopAllDemos() { demos.forEach((d) => { clearInterval(d.timer); d.timer = null; }); }
+  demos.forEach((d) => d.tabs.forEach((t, n) => t.addEventListener('click', () => {
+    showSceneFor(d, n);
+    if (!reduce) { clearInterval(d.timer); d.timer = setInterval(() => showSceneFor(d, (d.idx + 1) % d.scenes.length), 3000); }
+  })));
+
+  // ---- theme toggle (default light for daytime) ----
+  const tgl = document.getElementById('themeToggle');
+  function setTheme(light) {
+    document.body.classList.toggle('light', light);
+    if (tgl) tgl.textContent = light ? '☾' : '☀';
+    try { localStorage.setItem('deckTheme', light ? 'light' : 'dark'); } catch (e) {}
+  }
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem('deckTheme'); } catch (e) {}
+  setTheme(savedTheme ? savedTheme === 'light' : true);
+  if (tgl) tgl.addEventListener('click', () => setTheme(!document.body.classList.contains('light')));
+  window.addEventListener('keydown', (e) => { if (e.key === 't' || e.key === 'T') setTheme(!document.body.classList.contains('light')); });
+
+  go(0);
+</script>
+</body>
+</html>
